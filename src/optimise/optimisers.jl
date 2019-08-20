@@ -108,6 +108,8 @@ function apply!(o::ADAM, x, Δ)
   return Δ
 end
 
+Base.show(io::IO, o::ADAM) = print(io, "ADAM(", o.eta, ", ", o.beta, ")")
+
 """
     AdaMax(params, η = 0.001; β1 = 0.9, β2 = 0.999, ϵ = 1e-08)
 
