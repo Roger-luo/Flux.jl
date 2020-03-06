@@ -1,6 +1,6 @@
 using Flux.Optimise
 using Flux.Optimise: runall, update!
-using Flux: Params, gradient
+using Flux: gradient
 using Test
 
 @testset "Optimise" begin
@@ -9,11 +9,11 @@ using Test
                        NADAM(), RADAM(), Descent(0.1), ADAM(), Nesterov(), RMSProp(),
                        Momentum()]
     w′ = randn(10, 10)
-    loss(x) = Flux.mse(w*x, w′*x)
+    loss(x, w′) = Flux.mse(w*x, w′*x)
     for t = 1: 10^5
-      θ = Params([w′])
+      θ = w′
       x = rand(10)
-      θ̄ = gradient(() -> loss(x), θ)
+      _, _, θ̄ = gradient(loss, x, θ)
       Optimise.update!(opt, θ, θ̄)
     end
     @test loss(rand(10, 10)) < 0.01
@@ -24,12 +24,12 @@ end
   w = randn(10, 10)
   @testset for Opt in [InvDecay, WeightDecay, ExpDecay]
     w′ = randn(10, 10)
-    loss(x) = Flux.mse(w*x, w′*x)
+    loss(x, w′) = Flux.mse(w*x, w′*x)
     opt = Optimiser(Opt(), ADAM(0.001))
     for t = 1:10^5
-      θ = Params([w′])
+      θ = w′
       x = rand(10)
-      θ̄ = gradient(() -> loss(x), θ)
+      _, _, θ̄ = gradient(loss, x, θ)
       Optimise.update!(opt, θ, θ̄)
     end
     @test loss(rand(10, 10)) < 0.01
@@ -60,12 +60,12 @@ end
     w = randn(10, 10)
     o = ExpDecay(0.1, 0.1, 1000, 1e-4)
     w1 = randn(10,10)
-    loss(x) = Flux.mse(w*x, w1*x)
+    loss(x, w1) = Flux.mse(w*x, w1*x)
     flag = 1
     decay_steps = []
     for t = 1:10^5
       prev_eta = o.eta
-      θ = Params([w1])
+      θ = w1
       x = rand(10)
       θ̄ = gradient(() -> loss(x), θ)
       prev_grad = collect(θ̄[w1])

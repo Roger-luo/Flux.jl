@@ -79,22 +79,6 @@ end
   end
 end
 
-@testset "Params" begin
-  m = Dense(10, 5)
-  @test size.(params(m)) == [(5, 10), (5,)]
-  m = RNN(10, 5)
-  @test size.(params(m)) == [(5, 10), (5, 5), (5,), (5,)]
-
-  # Layer duplicated in same chain, params just once pls.
-  c = Chain(m, m)
-  @test size.(params(c)) == [(5, 10), (5, 5), (5,), (5,)]
-
-  # Self-referential array. Just want params, no stack overflow pls.
-  r = Any[nothing,m]
-  r[1] = r
-  @test size.(params(r)) == [(5, 10), (5, 5), (5,), (5,)]
-end
-
 @testset "Basic Stacking" begin
   x = randn(3,3)
   stacked = stack([x, x], 2)

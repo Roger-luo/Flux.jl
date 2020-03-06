@@ -71,35 +71,11 @@ Possible values include:
 """
 trainmode!(m, mode = true) = mode isa Bool ? testmode!(m, !mode) : testmode!(m, mode)
 
-params!(p::Params, x::AbstractArray{<:Number}, seen = IdSet()) = push!(p, x)
-
-function params!(p::Params, x, seen = IdSet())
-  x in seen && return
-  push!(seen, x)
-  for child in trainable(x)
-    params!(p, child, seen)
-  end
-end
-
-function params(m...)
-  ps = Params()
-  params!(ps, m)
-  return ps
-end
-
 # Deprecated stuff
 macro treelike(args...)
   functorm(args...)
 end
 mapleaves(f, x) = fmap(f, x)
-
-function loadparams!(m, xs)
-  for (p, x) in zip(params(m), xs)
-    size(p) == size(x) ||
-      error("Expected param size $(size(p)), got $(size(x))")
-    copyto!(p, x)
-  end
-end
 
 # CPU/GPU movement conveniences
 

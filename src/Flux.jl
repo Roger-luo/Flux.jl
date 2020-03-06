@@ -6,17 +6,16 @@ using Base: tail
 using Zygote, MacroTools, Juno, Reexport, Statistics, Random
 using MacroTools: @forward
 @reexport using NNlib
-using Zygote: Params, @adjoint, gradient, pullback, @nograd
+using Zygote: @adjoint, gradient, pullback, @nograd
 
 export gradient
 
 export Chain, Dense, Maxout, RNN, LSTM, GRU, Conv, CrossCor, ConvTranspose, MaxPool, MeanPool,
        DepthwiseConv, Dropout, AlphaDropout, LayerNorm, BatchNorm, InstanceNorm, GroupNorm,
-       SkipConnection, params, fmap, cpu, gpu, f32, f64, testmode!, trainmode!
+       SkipConnection, fmap, cpu, gpu, f32, f64, testmode!, trainmode!
 
 include("optimise/Optimise.jl")
 using .Optimise
-using .Optimise: @epochs
 export SGD, Descent, ADAM, Momentum, Nesterov, RMSProp,
   ADAGrad, AdaMax, ADADelta, AMSGrad, NADAM,
   ADAMW, RADAM, InvDecay, ExpDecay, WeightDecay
